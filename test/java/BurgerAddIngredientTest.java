@@ -1,5 +1,6 @@
 package praktikum;
 
+import org.assertj.core.api.SoftAssertions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -55,17 +56,28 @@ public class BurgerAddIngredientTest {
     }
 
     @Test
-    public void testAddIngredient_ShouldAddToIngredientsAndUpdatePrice() {
+    public void testAddIngredientShouldAddToIngredientsAndUpdatePrice() {
         Ingredient mockIngredient = mock(Ingredient.class);
         when(mockIngredient.getName()).thenReturn(ingredientName);
         when(mockIngredient.getPrice()).thenReturn(ingredientPrice);
-        when(mockIngredient.getType()).thenReturn(ingredientType.equals("BUN") ? IngredientType.FILLING : IngredientType.SAUCE); // условная логика
+        when(mockIngredient.getType()).thenReturn(
+                ingredientType.equals("BUN") ? IngredientType.FILLING : IngredientType.SAUCE
+        );
 
         float priceBefore = burger.getPrice();
         burger.addIngredient(mockIngredient);
 
-        assertThat(burger.ingredients).as("Список ингредиентов должен содержать добавленный ингредиент").contains(mockIngredient);
-        assertThat(burger.getPrice()).as("Цена бургера должна увеличиться на стоимость добавленного ингредиента").isEqualTo(priceBefore + ingredientPrice);
+        SoftAssertions softly = new SoftAssertions();
+
+        softly.assertThat(burger.ingredients)
+                .as("Список ингредиентов должен содержать добавленный ингредиент")
+                .contains(mockIngredient);
+
+        softly.assertThat(burger.getPrice())
+                .as("Цена бургера должна увеличиться на стоимость добавленного ингредиента")
+                .isEqualTo(priceBefore + ingredientPrice);
+
+        softly.assertAll();
     }
 
     @Parameterized.Parameters(name = "Добавляем {0}")
