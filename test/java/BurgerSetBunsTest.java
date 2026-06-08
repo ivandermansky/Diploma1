@@ -1,5 +1,6 @@
 package praktikum;
 
+import org.assertj.core.api.SoftAssertions;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,26 +54,33 @@ public class BurgerSetBunsTest {
     }
 
     @Test
-    public void testSetBuns_ShouldSetBunCorrectly() {
+    public void testSetBunsShouldSetBunCorrectly() {
         System.out.println("=== Тест: " + testDescription + " ===");
         System.out.println("Устанавливаем булку: " + bunName + " (цена: " + bunPrice + ")");
+
 
         // Выполнить установку
         burger.setBuns(mockBun);
 
-        // Проверить, что поле bun в объекте Burger теперь ссылается на переданную булку
-        assertThat(burger.bun)
+        // Создать экземпляр SoftAssertions
+        SoftAssertions softly = new SoftAssertions();
+
+
+        // Все проверки внутри блока SoftAssertions
+        softly.assertThat(burger.bun)
                 .as("Поле bun в бургере должно ссылаться на переданную булку")
                 .isEqualTo(mockBun);
 
-        // Дополнительно проверить свойства (через мок)
-        assertThat(burger.bun.getName())
+        softly.assertThat(burger.bun.getName())
                 .as("Имя булки должно совпадать")
                 .isEqualTo(bunName);
 
-        assertThat(burger.bun.getPrice())
+        softly.assertThat(burger.bun.getPrice())
                 .as("Цена булки должна совпадать")
                 .isEqualTo(bunPrice);
+
+        // Обязательный вызов — собирает все ошибки и выбрасывает единую AssertionError, если есть сбои
+        softly.assertAll();
     }
 
     @Parameterized.Parameters(name = "{2}")
